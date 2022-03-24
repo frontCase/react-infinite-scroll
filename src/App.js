@@ -1,23 +1,45 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState, useCallback, useRef } from 'react'
+import useFetch from "./components/infiniteScroll/controller/useFetch";
 
-function App() {
+const App = () => {
+  const [query, setQuery] = useState("");
+  const [page, setPage] = useState(1);
+  const { loading, error, list } = useFetch(query, page);
+  const loader = useRef(null);
+
+  const handleChange = (e) => {
+    setQuery(e.target.value);
+  };
+
+  const handleObserver = useCallback((entries) => {
+    const target = entries[0];
+    if (target.isIntersecting) {
+      setPage((prev) => prev + 1);
+    }
+  }, []);
+
+  useEffect(() => {
+    const option = {
+      root: null,
+      rootMargin: "20px",
+      threshold: 0
+    };
+    const observer = new IntersectionObserver(handleObserver, option);
+    if (loader.current) observer.observe(loader.current);
+  }, [handleObserver]);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Infinite Scroll</h1>
+      <input type="text" value={query} onChange={handleChange} />
+      <div>
+        {list.map((item, i) => (
+          <div key={i} style={{ backgroundColor: i % 2 == 0 ? 'gray' : '#0e0e0e0e', padding: "0.3rem", color: i % 2 !== 0 ? 'gray' : '#fefefe' }}>{item.status + ' ' + item.id}</div>
+        ))}
+      </div>
+      {loading && <p style={{ color: 'red', fontSize: '2rem' }}>Loading...</p>}
+      {error && <p>Error!</p>}
+      <div ref={loader} />
     </div>
   );
 }
