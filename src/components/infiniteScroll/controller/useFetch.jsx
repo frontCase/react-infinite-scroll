@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 
 const useFetch = (query, page) => {
+    console.log('constructor')
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
     const [list, setList] = useState([]);
@@ -20,9 +21,11 @@ const useFetch = (query, page) => {
     }, [query, page]);
 
     useEffect(() => {
+        console.log('useEffect')
         sendQuery(query);
     }, [query, sendQuery, page]);
 
+    console.log('render')
     return { loading, error, list };
 }
 

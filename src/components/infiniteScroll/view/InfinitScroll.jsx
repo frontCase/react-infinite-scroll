@@ -13,6 +13,7 @@ function InfinitScroll() {
 
     const handleObserver = useCallback((entries) => {
         const target = entries[0];
+        console.log('target.isIntersecting==>', target.isIntersecting)
         if (target.isIntersecting) {
             setPage((prev) => prev + 1);
         }
@@ -21,7 +22,7 @@ function InfinitScroll() {
     useEffect(() => {
         const option = {
             root: null,
-            rootMargin: "20px",
+            rootMargin: "200px",
             threshold: 0
         };
         const observer = new IntersectionObserver(handleObserver, option);
